@@ -209,21 +209,25 @@ router.get('/', (req, res) => {
             'features': {
                 'categories': {
                     'limit': 10,
+                    'explanation': true,
+                    'syntax': true
                 },
                 'entities': {
                     'emotion': true,
                     'sentiment': true,
                     'keywords': true,
-                    'mentions': true
+                    'limit': 5
                 },
+                'sentiment': {},
                 'keywords': {
                     'emotion': true,
                     'sentiment': true,
                     'keywords': true,
-                    'relations': true
+                    'relations': true,
+                    'limit': 5
                 },
                 'concepts': {
-                    'limit': 4
+                    'limit': 5
                 }
             }
         }
@@ -232,7 +236,7 @@ router.get('/', (req, res) => {
                 res.json({
                     success: true,
                     message: 'Concept',
-                    data: analysisResults,
+                    data: analysisResults.result,
                 });
             })
             .catch(err => {

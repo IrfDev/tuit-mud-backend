@@ -1,0 +1,82 @@
+type TextAnalytics {
+  id: ID!
+  categories: [Category!]
+  entities: [Entity!]
+  sentiments:[Sentiment!]
+  keywords: [Keyword!]
+  concepts: [Concept!]
+}
+
+type Concept {
+  text: String
+  relevance: float
+}
+
+type Keywords {
+  text: String!
+  Sentiment: Sentiment!
+  relevance: float
+  count: int
+}
+
+type Category {
+  score: float!
+  label: String!
+}
+
+type Entity {
+  type: String!
+  text: String!
+  Sentiment: Sentiment!
+}
+
+type Sentiment {
+  score: float!
+  label: String!
+}
+
+input Concept {
+  text: String
+  relevance: float
+}
+
+input Keywords {
+  text: String!
+  Sentiment: Sentiment!
+  relevance: float
+  count: int
+}
+
+input Category {
+  score: float!
+  label: String!
+}
+
+input Entity {
+  type: String!
+  text: String!
+  Sentiment: Sentiment!
+}
+
+input Sentiment {
+  score: float!
+  label: String!
+}
+
+input TextAnalytics {
+  id: ID!
+  categories: [Category!]
+  entities: [Entity!]
+  sentiments:[Sentiment!]
+  keywords: [Keyword!]
+  concepts: [Concept!]
+}
+
+input CreateTextAnalytics {
+  id: ID!
+  categories: [category!]
+  entities: [entity!]
+  sentiments:[sentiment!]
+  keywords: [keyword!]
+  concepts: [Concept!]
+}

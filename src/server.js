@@ -1,5 +1,6 @@
-const logger = require('./Lib/winston')
-const error = require('./Middlewares/error')
+const logger = require('./Lib/winston');
+const error = require('./Middlewares/error');
+// import { ApolloServer } from 'apollo-server-express';
 
 
 const cors = require('cors')
@@ -10,6 +11,14 @@ const express = require('express');
 const app = express();
 require('./Lib/routes')(app)
 
+// const server = new ApolloServer({
+//     schema,
+//     cors: true,
+//     playground: process.env.NODE_ENV === 'development' ? true : false,
+//     introspection: true,
+//     tracing: true,
+//     path: '/',
+// });
 
 process.on('uncaughtException', (ex) => {
     logger.logger.error(ex.message, ex)
@@ -19,6 +28,8 @@ process.on('unhandledRejection', (ex) => {
     logger.logger.error(ex.message, ex)
     process.exit
 })
+
+app.use(cors)
 
 app.use(express.urlencoded({ extended: true }))
 
