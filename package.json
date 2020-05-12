@@ -28,8 +28,11 @@
         "cors": "^2.8.5",
         "dotenv": "^8.2.0",
         "express": "^4.17.1",
+        "graphql-tag": "^2.10.3",
+        "graphql-tools": "^5.0.0",
         "ibm-watson": "^5.5.0",
         "jest": "^26.0.1",
+        "lodash": "^4.17.15",
         "mongodb": "^3.5.7",
         "mongoose": "^5.9.13",
         "morgan": "^1.10.0",
@@ -37,5 +40,16 @@
         "twitter": "^1.7.1",
         "winston": "^3.2.1",
         "winston-mongodb": "^5.0.1"
+    },
+    "devDependencies": {
+        "webpack": "^3.6.0",
+        "webpack-node-externals": "^1.6.0",
+        "babel-core": "^6.26.0",
+        "start-server-webpack-plugin": "^1.0.0",
+        "babel-loader": "^7.1.2",
+        "babel-plugin-transform-regenerator": "^6.26.0",
+        "babel-plugin-transform-runtime": "^6.23.0",
+        "babel-preset-env": "^1.6.0",
+        "babel-preset-stage-0": "^6.24.1"
     }
 }

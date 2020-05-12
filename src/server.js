@@ -1,24 +1,24 @@
 const logger = require('./Lib/winston');
 const error = require('./Middlewares/error');
-// import { ApolloServer } from 'apollo-server-express';
 
+const typeDefs = require('./Models/typeDefs/index');
+const { ApolloServer } = require('apollo-server-express');
 
-const cors = require('cors')
+const cors = require('cors');
 
 const morgan = require('morgan');
-
 const express = require('express');
 const app = express();
-require('./Lib/routes')(app)
+require('./Lib/routes')(app);
 
-// const server = new ApolloServer({
-//     schema,
-//     cors: true,
-//     playground: process.env.NODE_ENV === 'development' ? true : false,
-//     introspection: true,
-//     tracing: true,
-//     path: '/',
-// });
+const resolvers = {};
+
+const apolloServer = new ApolloServer({
+    typeDefs,
+    resolvers,
+});
+
+apolloServer.applyMiddleware({ app, path: '/graphql' })
 
 process.on('uncaughtException', (ex) => {
     logger.logger.error(ex.message, ex)
