@@ -1,10 +1,10 @@
-const User = require('../Models/User');
+const User = require('../../Models/User');
 
-const create = (_, { input }) => {
+const createUser = (_, { input }) => {
   return User.create(input);
 };
 
-const getAll = () => {
+const getAllUsers = () => {
   return User.find({}).exec();
 }
 
@@ -15,10 +15,9 @@ const getOne = (_, { id }) => {
 
 module.exports = {
   Query: {
-    getAll,
-    getOne,
+    getAllUsers,
   },
   Mutation: {
-    create,
+    createUser,
   },
 };

@@ -1,6 +1,7 @@
 const logger = require('./Lib/winston');
 const error = require('./Middlewares/error');
 
+const resolvers = require('./usecases/resolvers');
 const typeDefs = require('./Models/typeDefs/index');
 const { ApolloServer } = require('apollo-server-express');
 
@@ -11,7 +12,7 @@ const express = require('express');
 const app = express();
 require('./Lib/routes')(app);
 
-const resolvers = {};
+// const resolvers = {};
 
 const apolloServer = new ApolloServer({
     typeDefs,

@@ -1,10 +1,10 @@
-const TextAnalytics = require('../Models/TextAnalytics');
+const TextAnalytics = require('../../Models/TextAnalytics');
 
-const create = (_, { input }) => {
+const createTextAnalytics = (_, { input }) => {
   return TextAnalytics.create(input);
 };
 
-const getAll = () => {
+const getAllTextAnalytics = () => {
   return TextAnalytics.find({}).exec();
 };
 
@@ -14,10 +14,9 @@ const getOne = (_, { id }) => {
 
 module.exports = {
   Query: {
-    getAll,
-    getOne
+    getAllTextAnalytics,
   },
   Mutation: {
-    create
+    createTextAnalytics
   },
-}
+};
