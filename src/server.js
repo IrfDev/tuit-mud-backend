@@ -1,5 +1,6 @@
 const logger = require('./Lib/winston');
 const error = require('./Middlewares/error');
+const authCheck = require('./Middlewares/authCheck');
 
 const resolvers = require('./usecases/resolvers');
 const typeDefs = require('./Models/typeDefs/index');
@@ -7,12 +8,17 @@ const { ApolloServer } = require('apollo-server-express');
 
 const cors = require('cors');
 
+const passport = require('passport');
+const passportSetup = require('./Lib/passport');
+const session = require('express-session');
+const cookieSession = require('cookie-session');
+const cookieParser = require('cookie-parser');
+
 const morgan = require('morgan');
 const express = require('express');
-const app = express();
-require('./Lib/routes')(app);
 
-// const resolvers = {};
+const app = express();
+
 
 const apolloServer = new ApolloServer({
     typeDefs,
@@ -30,9 +36,37 @@ process.on('unhandledRejection', (ex) => {
     process.exit
 })
 
-app.use(cors)
-
 app.use(express.urlencoded({ extended: true }))
+
+app.use(
+    cookieSession({
+      name: "session",
+      keys: [process.env.COOKIE_KEY],
+      maxAge: 24 * 60 * 60 * 100
+    })
+  );
+app.use(cookieParser());
+
+app.use(session({
+  secret: 'SECRETTT',
+}));
+app.use(passport.initialize(passportSetup))
+app.use(passport.session());
+
+require('./Lib/routes')(app);
+
+
+app.use(cors())
+
+app.get("/", authCheck, (req, res) => {
+    res.status(200).json({
+      authenticated: true,
+      message: "user successfully authenticated",
+      user: req.user,
+      cookies: req.cookies
+    });
+  });
+
 
 if (app.get('env') === 'development') {
     app.use(morgan('tiny'));
