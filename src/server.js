@@ -8,10 +8,9 @@ const { ApolloServer } = require('apollo-server-express');
 
 const cors = require('cors');
 
+const session = require('express-session');
 const passport = require('passport');
 const passportSetup = require('./Lib/passport');
-const session = require('express-session');
-const cookieSession = require('cookie-session');
 const cookieParser = require('cookie-parser');
 
 const morgan = require('morgan');
@@ -20,12 +19,12 @@ const express = require('express');
 const app = express();
 
 
-const apolloServer = new ApolloServer({
-    typeDefs,
-    resolvers,
-});
+// const apolloServer = new ApolloServer({
+//     typeDefs,
+//     resolvers,
+// });
 
-apolloServer.applyMiddleware({ app, path: '/graphql' })
+// apolloServer.applyMiddleware({ app, path: '/graphql' })
 
 process.on('uncaughtException', (ex) => {
     logger.logger.error(ex.message, ex)
@@ -38,17 +37,13 @@ process.on('unhandledRejection', (ex) => {
 
 app.use(express.urlencoded({ extended: true }))
 
-app.use(
-    cookieSession({
-      name: "session",
-      keys: [process.env.COOKIE_KEY],
-      maxAge: 24 * 60 * 60 * 100
-    })
-  );
 app.use(cookieParser());
 
 app.use(session({
   secret: 'SECRETTT',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { maxAge: 600000000 ,secure: false, httpOnly: false  }
 }));
 app.use(passport.initialize(passportSetup))
 app.use(passport.session());
@@ -56,14 +51,16 @@ app.use(passport.session());
 require('./Lib/routes')(app);
 
 
-app.use(cors())
+app.use(
+  cors()
+);
 
 app.get("/", authCheck, (req, res) => {
     res.status(200).json({
       authenticated: true,
       message: "user successfully authenticated",
       user: req.user,
-      cookies: req.cookies
+      cookies: [req.cookies,req.user]
     });
   });
 

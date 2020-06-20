@@ -1,22 +1,24 @@
 const passport = require('passport');
-const User = require('../Models/User')
+const User = require('../Models/User');
+const clientFunction = require('../Lib/twitterauth')
 
 const TwitterStrategy = require("passport-twitter");
 
-passport.serializeUser((user, done) => {
-  console.log(user)
+passport.serializeUser(({ token, tokenSecret, profile}, done) => {
   done(null, {
-    name: user.profile.username,
-    screen_name: user.profile.displayName,
-    user: user.profile.id,
-    token: user.token,
-    tokenSecret:user.tokenSecret,
+    ref: token, 
+    sec:tokenSecret,
+    profile: {
+      username: profile.username,
+      name: profile.displayName,
+      description: profile._json.description,
+      twitterId: profile.id
+    }
   });
 });
 
 passport.deserializeUser((id, done) => {
-  console.log(id)
-  done(null, id);
+    done(null, id);
 });
 
 passport.use(
@@ -27,9 +29,18 @@ passport.use(
       callbackURL: "/auth/twitter/redirect"
     },
     async (token, tokenSecret, profile, done) => {
-      // const currentUser = await User.create({
-      //   twitterId: profile._json.id_str
-      // })
+     await  User.findOne({twitterId:profile.id},(err, user)=>{
+        if (!user) {
+          const client = clientFunction(token, tokenSecret);
+          client.get('/account/settings.json',{}, (err, settings, response) => {
+            const locations = settings.trend_location
+            User.create({locations, twitterId: profile.id})
+          });
+        } else {
+          User.findByTwitterId(profile.id);
+        };
+      })
+      // This functions is only for store the user, not affect the login or analysis process
       done(null, {profile, token, tokenSecret});
     }
   )

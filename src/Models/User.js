@@ -6,12 +6,15 @@ const userObject = new mongoose.Schema({
         enum: ['male', 'female'],
         required: false
     },
-    textAnalytics: {
+    textAnalytics: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'analyticsObjects',
-    },
+    }],
     locations: [{
         country: String,
         name: String,
-    }]
+    }],
+    twitterId: String,
 })
+
+module.exports = mongoose.model('user', userObject)

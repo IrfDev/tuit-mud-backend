@@ -1,252 +1,58 @@
 const express = require('express')
 const router = express.Router()
+const textAnalyticsUsecase = require('../usecases/TextAnalytics');
+const userUsecase = require('../usecases/Users');
 const nlu = require('../Lib/nlu')
 
-router.get('/', (req, res) => {
-    const analyzeText = ["https://t.co/k321Q08yQU  🙌🏻",
-        "@villaneeww Perdón :(",
-        "RT @itsdayis: Mi papito me marcó en la mañana bien triste porque no había vendido nada, su puesto esta por la UNIMEX de Cuautitlán Izcalli,…",
-        "@Soyfurrr @FaninisEstrada 😂😂\n\nPD. Feliz año nuevo 😘😘",
-        "@Soyfurrr @DannVr3",
-        "@_Maximoooo JAJAJA no fake",
-        "@ferchizbelman @DannVr3",
-        "@its_riccaa @sergioaruizh @DannVr3 😱",
-        "@charlsruuz Amos por alitas 🙊",
-        "@charlsruuz ¿Qué tal la cruda?",
-        "https://t.co/eUwVPCwjuH",
-        "@mhernandezc22 @SooyOchoa @aDeValle @Cinepolis @Profeco @EsDeMamador",
-        "https://t.co/QwTbvSvSlk",
-        "Ya compartieron sus memes,  prros\n\nAhora vean su Ted Talk \n\nhttps://t.co/MuTgNSj9XX",
-        "@DannVr3 @marfilu_ Para mis cachetes :(",
-        "@marfilu_ @DannVr3",
-        "RT @SoyUnCubo: 1 fav y ya bloqueo de todos lados al pinche @Irfffs 1 RT y lo bloqueo también de la vida real.",
-        "@SoyUnCubo Ultra fav",
-        "Do you believe that we have what it take?\n https://t.co/obttlGC7dC",
-        "Algún día seré como Julian Casablancas. \n\nLlegando pedo a trabajar y saliendo 40 minutos antes. \n\n#CoronaCapital19",
-        "RT @rcabello96: A veces me pregunto si Phil Barrera (vocero de aduanas) sabe lo famoso que es en México",
-        "@9000x @DannVr3 😂",
-        "RT @9000x: Ni Game of Thrones se atrevió a tanto \n\n https://t.co/Dp5pMvHBlV",
-        "@diego954tiburon @__MaarBravio Tantas desventajas culturales plasmadas en un solo tuit",
-        "@Sandy_Centeno @MuseoMexicano @FaninisEstrada",
-        "https://t.co/DedCJU4nc4",
-        "Girl de Wet Baes https://t.co/j2qHngmur7",
-        "Pulaski de Andrew Bird https://t.co/7l9kD3ipIU",
-        "@cronicadeguso Rolón, me salió una vez como despertador aleatorio de Spoti y no puedo dejar de escucharla.",
-        "@DannVr3 😘😘😛",
-        "@DannVr3 @literlandweb1 Te dije 😘",
-        "RT @FedericoArreola: Felipe Calderón perdonó más de 4 millones de pesos en impuestos a Bacardí https://t.co/U2PirYZaXh vía @sdpnoticias",
-        "@_Maximoooo Ultra fav",
-        "@FaninisEstrada @__Arakin https://t.co/ThiZ22v8AG",
-        "RT @melssflores: *yo saliendo del hoyo horrible de autodestrucción y humillación constante*\n\nel hoyo: Hola\n\nyo: \n\n https://t.co/RwpaxYlJIJ",
-        "RT @ElJeringasLoko: asuptm https://t.co/AbgSx7QQjq",
-        "RT @eddrev: Amigos, cancelen sus planes del fin, ya llegó Cervecería Chapultepec a CDMX.",
-        "@eddrev A hueeeeepo",
-        "RT @genesimmons: Mexico. What is it? https://t.co/IJoqZ6Sw3W",
-        "RT @blackyacuna: Mas de 300 niños y niñas, adolescentes que practican deporte y estan alejados de la calle, de vicios y de la violencia que…",
-        "RT @blackyacuna: Atención  @Claudiashein \nEl dia de hoy por la mañana, más de 100 personas (no todas identificadas) de la alcaldía  @Xochim…",
-        "@TaaniaaJohnson @__Arakin, @FaninisEstrada https://t.co/4asqooMc8h",
-        "@DannVr3 @klavierugo Si quiero 😘😘😘",
-        "@FaninisEstrada ¿Todo bien tía?",
-        "🤠\n\nhttps://t.co/plTPVu6Izk",
-        "@andrealozaaa @Alexisru9 para Ross",
-        "@andrealozaaa El mismísimo @GaiskaShullz",
-        "@rubbbb Everybody go to",
-        "RT @_alynana: Me da risa cuando quieren humillarme, diciendo que no tengo título universitario.\n\nTengo un negocio propio.\nDoy trabajo a dos…",
-        "RT @eldeforma: Reportan escasez de choferes de Uber por festejo del #DiaDelAbogado\n\nhttps://t.co/sl2jWFj2Nd",
-        "@hommedelanvin @FaninisEstrada internacional 😂",
-        "@charlsruuz @__Arakin @DannVr3 https://t.co/62iMfonhi2",
-        "@__Arakin @FaninisEstrada @_Maximoooo 😂😂😂😂",
-        "@charlsruuz @GaiskaShullz",
-        "Al estilo All For The Best, lo hizo de nuevo\n\n ANIMA de Thom Yorke\nhttps://t.co/cmdQGG1Jup",
-        "@GaiskaShullz Sí estás dlv",
-        "@DannVr3 @stxrgrl_ @morphxharry 😂😂😂😍😘",
-        "@MfTequila https://t.co/MnMd5sO0Gx",
-        "\"Hello Mark Linkous - A Tribute to Sparklehorse\" de Various Artists  https://t.co/J6E8uMsmvp",
-        "@CrlosElizondo @FaninisEstrada",
-        "Gobierno ordena quitar anuncio por decir que tacos están “mejor preparados que las autoridades” https://t.co/20CgKkUWfv",
-        "La silla del lic https://t.co/3vkaInQlaF",
-        "https://t.co/FA7eSRgycG",
-        "@__Arakin 😂😂",
-        "https://t.co/ghZqpIumlq",
-        "https://t.co/1w32UwFkD6",
-        "Mis extras https://t.co/Nx3gsXg1Vx",
-        "https://t.co/bAiGL8eySy",
-        "¡Sale perros! https://t.co/gn99bTQeRD",
-        "@DannVr3 https://t.co/N22U3VTnNt",
-        "Do It Again de Holy Ghost!\nhttps://t.co/UeqivsN4ID",
-        "@DannVr3 @yisucrist Jajajaja https://t.co/2I0MbLJuHs",
-        "\"Ghost\" de Motorama en  https://t.co/Z16wrfTOqK",
-        "Tremendo rolón\n\n#NowPlaying \"Midnight Caller - RELAYER Remix\" de Wet Baes en @TIDAL https://t.co/Q3TRbqp7Gs",
-        "Design thinking\n\nhttps://t.co/4AoR9zbg0K",
-        "@__Arakin Aguacate? https://t.co/FSm8djyInt",
-        "@DannVr3 @MuseoMexicano Jajajajajaja me equivoqué de tatuaje",
-        "RT @lamalaroma: Necesito que los comunicólogos topen que NO SON DISEÑADORES GRÁFICOS GRAX.",
-        "Domingo Guerra, fundador de Appthority: Un emprendedor latinoamericano que vendió su startup en Silicon Valley\nhttps://t.co/FGqfn1bgLb",
-        "@__Arakin Apenas van 3 días :( \n\nYa mejor saca trajas, aún quedan 27 días 😎",
-        "@charlsruuz @__Arakin JAJAJAJA puro Rib Eye alv",
-        "¿Cómo estudiar para dos extras en sólo dos días? \n\n- Yahoo respuestas",
-        "@charlsruuz @__Arakin Jajajaja maruchan Is go(o)d",
-        "@charlsruuz https://t.co/YADOkKchpN",
-        "@__Arakin https://t.co/SqEd5QYg1t",
-        "@__Arakin Tú ayer escuchando nuestras pláticas 😂😂",
-        "@DannVr3 Gracias 😘",
-        "@charlsruuz Gracias bro!! Al rato nos vemos https://t.co/ssKBI3bo4y",
-        "https://t.co/3oJMQWBgaG",
-        "Andrew Bird, es una joya 😍\n\n#NowPlaying \"My Finest Work Yet\" de Andrew Bird en @TIDAL https://t.co/N7mbO8ITFw",
-        "RT @DrZupreeme: El pinche ruido espantoso de los camoteros, eso debería ser ilegal, no el aborto.",
-        "@thesmallestboy Adjunto vídeo https://t.co/H383H9Hgd8",
-        "RT @RevistaSG: Esta edición de @awscdmx esta enfocada a Data Science, sigue las charlas https://t.co/oThSTq4suz",
-        "@Becanew The Square [Netflix] \n\nEs sobre la revolución en Egipto, está buenazo!",
-        "@nino_triqui @__Arakin @FaninisEstrada Poder vikingo! 😂",
-        "Working From Home Makes Employees More Productive\n\nhttps://t.co/A7WqmpwZbO",
-        "RT @dann_LOL_: ¿Por qué romantizan las respuestas instantáneas de WA?\nRomanticen que su pareja no sea un parásito y tenga un chingo de cosa…",
-        "@ICEEmx Te mamaste, brother",
-        "RT @EsClaix: Confirmen si sí esta dañadísimo revisar esta sección https://t.co/FeK2fhRcHx",
-        "@DannVr3 @HeisselPaulina https://t.co/QRpE4Twup2",
-        "@DannVr3 @MfTequila Jajajajajajaja pobre @MfTequila 😜",
-        "RT @lopezobrador_: Debe fortalecerse el poder civil con el establecimiento de la democracia. El militarismo no es solución http://bit.ly/a0…",
-        "@DannVr3 @_Maximoooo @FaninisEstrada Putito",
-        "@SoyUnCubo La cura",
-        "@jadelmonte @FaninisEstrada Ojo aquí",
-        "Alex Edmans: En qué confiar en un mundo “posverdad” https://t.co/eTllG59cXE",
-        "@Karenlopolis Tremenda joya, corren al 100 siempre.\n\nChingo de memoria\n\nChingos de píxeles en la cámara \n\n🙌",
-        "@MeminVerguin A huefffo! Gracias bro 🙌",
-        "@iBluees @Rangel_Pam Jajajaja a huevo!!! 🙌🙌🙌",
-        "@Alexisru9 A huevo bro!!! Gracias 🙌👏",
-        "@SoyUnCubo Graciass! 🙌",
-        "@Rangel_Pam ¡Gracias! 😜",
-        "@MfTequila Jajajaja hay que firmarla...\n\nCon unas chelas 😎😎🙌",
-        "@MfTequila 😍",
-        "@_Maximoooo Gracias brow \n😎🙌",
-        "@eddrev ¡A huevo bro! \n\nGracias cawn 😎",
-        "@__Arakin ¡Graciass! 😘",
-        "@FaninisEstrada ¡Babbbbyyy, gracias! 😍😎",
-        "@Karenlopolis ¡Gracias! 😎",
-        "Salió hoy en edición escrita y en tres meses en versión digital 😭",
-        "Hoy es un hecho y casi lloro de la felicidad, porque mencionaron mi proyecto en Forbes, con empresas de talla mundi… https://t.co/ZS5zagiZgQ",
-        "Amigos, hace cuatro meses le propuse un proyecto a una empresa...\n\nY bromeando en la peda le dije a un amigo: \n\"Deb… https://t.co/IegMXc0KiE",
-        "@_Maximoooo Siempre pedo, nunca inpedo",
-        "@FaninisEstrada @__Arakin Ojo aquí Arachela 😜",
-        "@_Maximoooo @tonayantears @MfTequila JAJAJAJAJAJAJA EL REMIX",
-        "@charlsruuz La historia de tu vida 😂",
-        "@__Arakin Jajajja me sentí igual! 😂",
-        "https://t.co/ihIsYpdLo2",
-        "¿Cómo le hacen para qué salga éste final? https://t.co/Wn3F17Q4Ae",
-        "Tatuaje + Smashing Pumpkins = ❤️",
-        "RT @JoseJardinero: \"Es que esta sonrisa se me sale sola, a veces, cuando tú hablas\".",
-        "RT @MAJORLAZER: Mi burrito sabanero is a jam",
-        "RT @CeroMiedoViejo: Yo: Ya quiero que sea navidad\nTuiter: Creo que no entendiste el mensaje de ROMA",
-        "@annmasaccio @TIDAL Está muy buena! https://t.co/naD6TmNQt7",
-        "Holy fuck ❤️\n\n#NowPlaying \"Pájaros\" de Porter en @TIDAL https://t.co/zfJnvfLJOk",
-        "RT @_Maximoooo: Que alguien me regrese a ese momento khermozo donde todos fuimos una sola alma cantando Mariposa Traicionera de Maná.",
-        "Feat Pablo",
-        "Estoy harto de escuchar la misma frase siempre :( \n\n-Aquí no puede tomar joven",
-        "@DannVr3 https://t.co/T0ZB0rnlWT",
-        "@__Arakin @Jarqz Como tiene que ser ! https://t.co/aGXWGt4B5J",
-        "Adjunto meme https://t.co/LmGwhf6eRZ",
-        "https://t.co/lp8y5pitqA\n\nStartupeando",
-        "@DannVr3 Lily Pad 😚",
-        "@soyPacho99 Ufff! 😍",
-        "@lucifermgr X4",
-        "@DannVr3 @thesmallestboy https://t.co/eBuTXKoBJQ",
-        "No me vengan a hablar de tacos sí no han ido a Los Chinos",
-        "https://t.co/ELkgRAU2Jr",
-        "@Angel_Banda Literal",
-        "¿A poco no? https://t.co/DxVJBHOsjW",
-        "@__Arakin Ojo aquí @DannVr3",
-        "@__Arakin https://t.co/rMCgGZ7ohE",
-        "Cuando te quieren aconsejar/////// pero sólo te dicen \"échale ganas\" https://t.co/FbOhuANO5a",
-        "RT @MawSaldivar: Algún día los de Facebook van a descubrir que los memes que comparten son tweets y van a descubrir nuestra sociedad secret…",
-        "@__Arakin And a little bit of Belinda",
-        "RT @catrinafestival: 🙌🏼 ¡@MiJuanSon! 🙌🏼 \n¡Nuevo Acto Confirmado en #IndioCatrina2018!\n\nBoletos General 🎟 y Upgrade Platino 🔝 en https://t.c…",
-        "@_Maximoooo 😍",
-        "@FaninisEstrada Jajajaja real sí :(",
-        "Gracias Sr.Uber, me mama hablar de cuanto esperma produjo Adán para poblar al mundo.",
-        "@DannVr3 @Valeriatt Ufff, The Dancers. 😍\n\nNo había visto a Basquiat 😱😱",
-        "RT @Kaizzer: -Es que no aceptan la crítica.\n- Pero solo llegaste a decirme pinche payaso vendido ignorante estupido idiota.\n- ACEPTA LA CRÍ…",
-        "@FaninisEstrada Me uno a la planeación estratégica",
-        "No sean evasivos! 😂 https://t.co/whyBSSJlTQ",
-        "Amigos bikers, se requiere de su presencia en: \nhttps://t.co/VIVG389vV2\n\n😎😎😎😎😎\n\nSí me conocen mándenme mensaje y a… https://t.co/oQSPDiFWWP",
-        "@__Arakin @MellamoRalphW https://t.co/0bKq0TzJ0Q",
-        "@annmasaccio @EsDeMamador Ultra",
-        "Prro https://t.co/5zhyrQxXwC",
-        "Llevaba una semana de solo escuchar una lista que hice de él :(",
-        "Mac Miller :(",
-        "@JSYML @LADIANEPERGA ¿Eres tú, @MfTequila ?",
-        "RT @LosSimpsonMX: MILHOUSEEEEEEEEE\nQ\nU\nE\nE\nE\nE\nE\nE\nE\nE\nE\nE\nE\nE\nE\nE\nE\nE\nE\nE\nDILE A BART QUE VENGA AQUIII\nC\nR\nE\nO\n \nQ\nU\nE\n\nE\nS\nT\nA\n\nC\nO\nN\n\nN…",
-        "Amigos, creo que el deal no está en sí tu escuela es de paga o no. \n\nEstá en lo que puedas construir con tu educaci… https://t.co/45mlh66iMy",
-        "Tantas personas queriendo ser como él. https://t.co/KZ3H1cu81D",
-        "@charlsruuz JAJAJAJAJAJAJA mamaste",
-        "@villaneeww https://t.co/2YB5E7tjz4",
-        "Ya dejen de jugar con las mantecadas :(",
-        "Perdiéndome el Growth Entrepreneur porque se me olvidó que era hoy🤦🏻‍♂️🤦🏻‍♂️🤦🏻‍♂️🤦🏻‍♂️",
-        "@GaiskaShullz Puro licuado de tortacubana con quesillo.",
-        "Pasos para volver un sitio web lento:\n\n1. Instala un programa para hacerlo rápido.",
-        "@PiyamaParty 12 bar bruise.\n\nSiento que es la combinación entre King Tuff, Harlem y Jay Retard 😎",
-        "@Chokis_Mx Chavorruqueando",
-        "https://t.co/Mk9u4yERtJ",
-        "@AGDavidArias Debería fijarlo en mi perfil",
-        "Ya hay envíos internacionales 😎\n\nhttps://t.co/t7OBfPlKNH",
-        "En combo con:\n\nhttps://t.co/HS0Z5vKuZ0",
-        "Fav https://t.co/J9B7rvxyk6",
-        "Ahora sí, mi último semestre.",
-        "Genialidad total\n\nhttps://t.co/zi1VTzc75L",
-        "@eddrev Justo ahí",
-        "@annmasaccio Duda resuleta",
-        "RT @korno: https://t.co/2cC5kszWpj",
-        "¿A qué edad comienza a ser triste desayunar/comer quesadillas de horno porque no sabes preparar algo más?",
-        "RT @rubbbb: Accurate. https://t.co/IlwJWcWRuw",
-        "@SoyUnCubo  https://t.co/q1kcAJ5lYO",
-        "No sé que es más tardado:\n \n✅Yo con mis créditos escolares\n❌El render",
-        "RT @leogleal: Mi mamá quiere ir a santander a preguntar porque cada mes le quitan $100 de su tarjeta y la verdad es que ella paga mi spotif…",
-        "En la página de la facultad publican #TrabajoSiHay con sueldos de 5k. \n\n¿Es una clase de broma cruel? https://t.co/V5b3qpEao8",
-        "RT @adnben: E-Commerce en México: ¿Qué categorías se venden más? https://t.co/JJZZrQWxJN"
-    ]
-    try {
-        const analyzeParams = {
-            text: analyzeText.join(),
-            "language": "es",
-            'features': {
-                'categories': {
-                    'limit': 10,
-                    'explanation': true,
-                    'syntax': true
-                },
-                'entities': {
-                    'emotion': true,
-                    'sentiment': true,
-                    'keywords': true,
-                    'limit': 5
-                },
-                'sentiment': {},
-                'keywords': {
-                    'emotion': true,
-                    'sentiment': true,
-                    'keywords': true,
-                    'relations': true,
-                    'limit': 5
-                },
-                'concepts': {
-                    'limit': 5
-                }
+router.post('/:type', async(req, res) => {
+    const analyzeText = req.body;
+    const twitterId = req.user.profile.twitterId;
+    const type = req.params.type;
+    const analyzeParams = {
+        text: analyzeText.join(),
+        "language": "es",
+        'features': {
+            'categories': {
+                'limit': 10,
+                'explanation': true,
+                'syntax': true
+            },
+            'entities': {
+                'emotion': true,
+                'sentiment': true,
+                'keywords': true,
+                'limit': 5
+            },
+            'sentiment': {},
+            'keywords': {
+                'emotion': true,
+                'sentiment': true,
+                'keywords': true,
+                'relations': true,
+                'limit': 5
+            },
+            'concepts': {
+                'limit': 5
             }
         }
-        nlu.analyze(analyzeParams)
-            .then(analysisResults => {
-                res.json({
-                    success: true,
-                    message: 'Concept',
-                    data: analysisResults.result,
-                });
-            })
-            .catch(err => {
-                console.log('error:', err);
-            });
-
+    };
+    try {
+        const analysisResults = await nlu.analyze(analyzeParams);
+        const newTextAnalyticsObject = await textAnalyticsUsecase.create({
+            user: twitterId,
+            type,
+            ...analysisResults.result
+        });
+        await userUsecase.update(twitterId, {textAnalytics: newTextAnalyticsObject._id});
+        res.json({
+            success: true,
+            message: 'Concept',
+            data: analysisResults.result,
+        });
     } catch (errors) {
         res.json({
             success: false,
-            message: 'No se consiguiero acceder',
+            message: 'No se consiguieron analizar los twitts',
             error: errors
         })
     }

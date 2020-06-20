@@ -32,8 +32,8 @@ router.post('/', async(req, res) => {
             message: 'New user created',
             data: {
                 user: {
-                    newUser
-                }
+                    newUser,
+                },
             }
         })
     } catch (error) {

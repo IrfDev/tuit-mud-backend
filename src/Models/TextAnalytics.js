@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const textAnalyticsSchema = new mongoose.Schema({
     categories: {
@@ -17,6 +17,11 @@ const textAnalyticsSchema = new mongoose.Schema({
         type: Array,
         required: true
     },
-})
+    type: {
+        type:String,
+        enum: ['mentions', 'tweets', 'favs'],
+        required: true
+    }
+});
 
-module.exports = mongoose.model('analyticsObjects', textAnalyticsSchema)
+module.exports = mongoose.model('analyticsObjects', textAnalyticsSchema);

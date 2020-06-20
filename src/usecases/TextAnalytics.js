@@ -3,15 +3,19 @@ const TextAnalytics = require('../Models/TextAnalytics');
 function create({
     type,
     entities,
-    sentiments,
+    sentiment,
+    categories,
     keywords,
+    concepts,
     user
 }) {
     const newTextAnalytics = new TextAnalytics({
         type,
         entities,
-        sentiments,
+        sentiments: sentiment.document,
+        concepts,
         keywords,
+        categories,
         user,
     });
     return newTextAnalytics.save();
