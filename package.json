@@ -1,7 +1,7 @@
 {
     "name": "tuit-mud-backend",
     "version": "1.0.0",
-    "description": "Guess your personality with NLU and Visual recognition ",
+    "description": "Guess your personality",
     "main": "index.js",
     "scripts": {
         "test": "test",

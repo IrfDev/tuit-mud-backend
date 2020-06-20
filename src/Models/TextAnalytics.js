@@ -9,6 +9,10 @@ const textAnalyticsSchema = new mongoose.Schema({
         type: Array,
         required: true
     },
+    concepts: {
+        type: Array,
+        required: true
+    },
     sentiments: {
         type: Array,
         required: true

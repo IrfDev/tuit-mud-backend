@@ -37,7 +37,7 @@ passport.use(
             User.create({locations, twitterId: profile.id})
           });
         } else {
-          User.findByTwitterId(profile.id);
+          user
         };
       })
       // This functions is only for store the user, not affect the login or analysis process
