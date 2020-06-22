@@ -4,15 +4,17 @@ const clientFunction = require('../Lib/twitterauth')
 
 const TwitterStrategy = require("passport-twitter");
 
-passport.serializeUser(({ token, tokenSecret, profile}, done) => {
+passport.serializeUser(({ token, tokenSecret, profile,exist}, done) => {
   done(null, {
     ref: token, 
-    sec:tokenSecret,
+    sec: tokenSecret,
+    exist,
     profile: {
       username: profile.username,
       name: profile.displayName,
       description: profile._json.description,
-      twitterId: profile.id
+      twitterId: profile.id,
+      picture: profile.photos[0].value
     }
   });
 });
@@ -29,7 +31,8 @@ passport.use(
       callbackURL: "/auth/twitter/redirect"
     },
     async (token, tokenSecret, profile, done) => {
-     await  User.findOne({twitterId:profile.id},(err, user)=>{
+      console.log(profile)
+      await User.findOne({ twitterId: profile.id }, (err, user) => {
         if (!user) {
           const client = clientFunction(token, tokenSecret);
           client.get('/account/settings.json',{}, (err, settings, response) => {

@@ -15,18 +15,20 @@ function create({
 };
 
 function findByTwitterId(twitterId) {
-    return User.findOne({twitterId})
+    return User.findOne({ twitterId })
+        .populate('textAnalytics');
 };
 
 function update(twitterId, {textAnalytics}) {
     return User.updateOne(
-        {twitterId},
-        {$addToSet: {textAnalytics}})
+        { twitterId },
+        { $addToSet: { textAnalytics } });
     // findOneAndUpdate(twitterId,textAnalytics, (res)=>console.log(res))
 };
 
 function getAll() {
     return User.find()
+        .populate('textAnalytics')
 }
 
 module.exports = {

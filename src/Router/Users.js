@@ -1,6 +1,5 @@
 const express = require('express');
 const user = require('../usecases/Users')
-
 const router = express.Router()
 
 router.get('/', async(req, res) => {
@@ -11,6 +10,28 @@ router.get('/', async(req, res) => {
             message: 'All users with text analytics',
             data: {
                 users: allUsers,
+            },
+        });
+    } catch (error) {
+        res.json({
+            success: false,
+            message: 'Failed to fetch all users',
+            error: error.message,
+        });
+    };
+});
+
+router.get('/:twitterId', async(req, res) => {
+    try {
+        const actualUser = await user.findByTwitterId(req.params.twitterId)
+        console.log(actualUser)
+        const wasAnalyzed = actualUser.textAnalytics.length > 0  ? true : false;
+        res.json({
+            success: true,
+            message: 'User by TwitterId',
+            data: {
+                user: actualUser,
+                wasAnalyzed
             },
         });
     } catch (error) {
