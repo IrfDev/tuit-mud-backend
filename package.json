@@ -35,7 +35,7 @@
         "graphql-tools": "^5.0.0",
         "ibm-watson": "^5.5.0",
         "jest": "^26.0.1",
-        "lodash": "^4.17.15",
+        "lodash": "^4.17.19",
         "mongodb": "^3.5.7",
         "mongoose": "^5.9.13",
         "morgan": "^1.10.0",
