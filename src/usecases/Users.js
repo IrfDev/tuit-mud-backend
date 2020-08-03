@@ -1,39 +1,30 @@
-const User = require('../Models/User');
+const User = require("../Models/User");
 
-function create({
+function create({ gender, textAnalytics, locations, twitterId }) {
+  const newUserObject = new User({
     gender,
     textAnalytics,
-    locations, 
-    twitterId
-}) {
-    const newUserObject = new User({
-        gender,
-        textAnalytics,
-        locations,twitterId
-    });
-    return newUserObject.save();
-};
+    locations,
+    twitterId,
+  });
+  return newUserObject.save();
+}
 
 function findByTwitterId(twitterId) {
-    return User.findOne({ twitterId })
-        .populate('textAnalytics');
-};
+  return User.findOne({ twitterId }).populate("textAnalytics");
+}
 
-function update(twitterId, {textAnalytics}) {
-    return User.updateOne(
-        { twitterId },
-        { $addToSet: { textAnalytics } });
-    // findOneAndUpdate(twitterId,textAnalytics, (res)=>console.log(res))
-};
+function update(twitterId, { textAnalytics }) {
+  return User.updateOne({ twitterId }, { $addToSet: { textAnalytics } });
+}
 
 function getAll() {
-    return User.find()
-        .populate('textAnalytics')
+  return User.find().populate("textAnalytics");
 }
 
 module.exports = {
-    getAll,
-    create,
-    update,
-    findByTwitterId
-}
+  getAll,
+  create,
+  update,
+  findByTwitterId,
+};
