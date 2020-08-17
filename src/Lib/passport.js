@@ -28,7 +28,7 @@ passport.use(
     {
       consumerKey: process.env.TWITTER_CONSUMER_KEY,
       consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-      callbackURL: "/auth/twitter/redirect",
+      callbackURL: "https://api.tuitmud.app/auth/twitter/redirect",
     },
     async (token, tokenSecret, profile, done) => {
       await User.findOne({ twitterId: profile.id }, (err, user) => {

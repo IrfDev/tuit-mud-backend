@@ -7,7 +7,7 @@ COPY package.json ./
 
 RUN npm i
 #Into the package.json you can add Bcrypt as DevDependency
-RUN npm rebuild bcrypt --build-from-source
+# RUN npm rebuild bcrypt --build-from-source
 
 COPY . .
 

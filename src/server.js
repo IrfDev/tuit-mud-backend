@@ -13,13 +13,14 @@ const morgan = require("morgan");
 const express = require("express");
 
 const app = express();
-
+app.use(cors());
 // Log in database all the fatal errors
 
 process.on("uncaughtException", (ex) => {
   logger.logger.error(ex.message, ex);
   process.exit;
 });
+
 process.on("unhandledRejection", (ex) => {
   logger.logger.error(ex.message, ex);
   process.exit;
@@ -34,9 +35,13 @@ app.use(cookieParser());
 app.use(
   session({
     secret: "SECRETTT",
-    resave: false,
-    saveUninitialized: true,
-    cookie: { maxAge: 600000000, secure: false, httpOnly: false },
+
+    cookie: {
+      maxAge: 600000000,
+      domain: ".tuitmud.app",
+    },
+
+    // rolling: true,
   })
 );
 
@@ -48,7 +53,7 @@ app.use(passport.session());
 
 require("./Lib/routes")(app);
 
-app.use(cors());
+// app.use(cors());
 
 // For the main route
 
@@ -58,6 +63,12 @@ app.get("/", authCheck, (req, res) => {
     message: "user successfully authenticated",
     user: req.user,
     cookies: [req.cookies, req.user],
+  });
+});
+
+app.get("/working", (req, res) => {
+  res.json({
+    message: "Api server is up and running",
   });
 });
 
